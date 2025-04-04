@@ -9,46 +9,63 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const matchIds = [1506387316]; // Lista de IDs de partidos
 const TEAM_ID = '1099103'; // ID del equipo
 
-function delay(time) {
-    return new Promise(resolve => setTimeout(resolve, time));
-}
-
-async function fetchMatchType(matchId) {
-    const url = `http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id=${TEAM_ID}&match_status=1&limit=100`;
+async function fetchMatchIds() {
+    const url = 'http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id=1099103&match_status=1&limit=50';
     const response = await axios.get(url);
     const xml = response.data;
 
     const parser = new xml2js.Parser();
     return new Promise((resolve, reject) => {
         parser.parseString(xml, (err, result) => {
+            if (err) return reject(err);
+            
+            // Extraer los 'id' de los partidos
+            const matchIds = result.ManagerZone_MatchList.Match.map(match => match.$.id);
+            resolve(matchIds);
+        });
+    });
+}
+
+function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+
+async function fetchMatchType(matchId, xmlResponse) {
+    const xml = xmlResponse.data;
+    const parser = new xml2js.Parser();
+    return new Promise((resolve, reject) => {
+        parser.parseString(xml, (err, result) => {
             if (err) {
                 return reject(err);
             }
-
+            
             // Asegurar que existe la lista de partidos
             if (!result.ManagerZone_MatchList || !result.ManagerZone_MatchList.Match) {
-                return resolve('Desconocido');
+                return resolve({ matchType: 'Desconocido', typeId: 'Desconocido' });
             }
-
-            const matches = result.ManagerZone_MatchList.Match; // Corregido
-
+            
+            const matches = result.ManagerZone_MatchList.Match;
+            
             for (const match of matches) {
-                if (parseInt(match.$.id) === matchId) {  // Acceder al atributo 'id' correctamente
-                    resolve(match.$.type); // Acceder al atributo 'type' correctamente
+                if (parseInt(match.$.id) == matchId) {
+                    resolve({
+                        matchType: match.$.type,  // Obtener el tipo de partido
+                        typeId: match.$.typeId   // Obtener el typeId
+                    });
                     return;
                 }
             }
-            resolve('Desconocido'); // Default type if not found
+            resolve({ matchType: 'Desconocido', typeId: 'Desconocido' });
         });
     });
 }
 
 
+
 async function scrapeMatchData(matchId) {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
 
@@ -185,14 +202,14 @@ function determineTactic(positions) {
     return `${counts.De}-${counts.Me}-${counts.At}`;
 }
 
-async function saveToSupabase(matchId, data, positions, rivalName) {
+async function saveToSupabase(matchId, data, positions, rivalName, xmlMatchesResponse) {
     // Verificar si el partido ya existe en la base de datos
     let { data: matchExists } = await supabase.from('matches').select('*').eq('id', matchId);
-    
     if (!matchExists || matchExists.length === 0) {
         const tactic = determineTactic(positions);
-        const matchType = await fetchMatchType(matchId); // Obtener el tipo de partido
-        await supabase.from('matches').insert([{ id: matchId, tactic, type: matchType, rival: rivalName }]);
+        const {matchType, typeId } = await fetchMatchType(matchId, xmlMatchesResponse); // Obtener el tipo de partido
+        const { error: matchesinsertError } = await supabase.from('matches').insert([{ id: matchId, tactic, type: matchType, match_type_id: typeId, rival: rivalName }]);
+        if (matchesinsertError) console.error('Error insertando matches en Supabase:', playerInsertError);
     }
     
     // Recuperar IDs de jugadores existentes
@@ -229,6 +246,10 @@ async function saveToSupabase(matchId, data, positions, rivalName) {
 }
 
 (async () => {
+    const matchIds = await fetchMatchIds();
+    console.log(matchIds); // Verifica que los IDs se extraen correctamente
+    const url = `http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id=${TEAM_ID}&match_status=1&limit=100`;
+    const xmlMatchesResponse = await axios.get(url);
     for (const matchId of matchIds) {
         const { data, positions, rivalName } = await scrapeMatchData(matchId);
         //print all the data for each match to check if it is correct
@@ -237,6 +258,6 @@ async function saveToSupabase(matchId, data, positions, rivalName) {
         console.log('Positions:', positions);
         console.log('Rival:', rivalName);
         // Guardar en Supabase
-        await saveToSupabase(matchId, data, positions, rivalName);
+        await saveToSupabase(matchId, data, positions, rivalName, xmlMatchesResponse);
     }
 })();
