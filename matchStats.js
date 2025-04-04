@@ -209,7 +209,7 @@ async function saveToSupabase(matchId, data, positions, rivalName, xmlMatchesRes
         const tactic = determineTactic(positions);
         const {matchType, typeId } = await fetchMatchType(matchId, xmlMatchesResponse); // Obtener el tipo de partido
         const { error: matchesinsertError } = await supabase.from('matches').insert([{ id: matchId, tactic, type: matchType, match_type_id: typeId, rival: rivalName }]);
-        if (matchesinsertError) console.error('Error insertando matches en Supabase:', playerInsertError);
+        if (matchesinsertError) console.error('Error insertando matches en Supabase:', matchesinsertError);
     }
     
     // Recuperar IDs de jugadores existentes
