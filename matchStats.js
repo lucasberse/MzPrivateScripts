@@ -251,6 +251,16 @@ async function saveToSupabase(matchId, data, positions, rivalName, xmlMatchesRes
     const url = `http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id=${TEAM_ID}&match_status=1&limit=100`;
     const xmlMatchesResponse = await axios.get(url);
     for (const matchId of matchIds) {
+        // Verificar si el match ya tiene stats de jugadores en la base de datos
+        const { data: existingStats, error } = await supabase
+        .from('player_stats')
+        .select('player_id', { count: 'exact', head: true })
+        .eq('match_id', matchId);
+
+        if (!error && existingStats && existingStats.length > 0) {
+            console.log(`⏩ Partido ${matchId} ya tiene stats. Saltando...`);
+            continue;
+        }
         const { data, positions, rivalName } = await scrapeMatchData(matchId);
         //print all the data for each match to check if it is correct
         console.log(`Match ID: ${matchId}`);
