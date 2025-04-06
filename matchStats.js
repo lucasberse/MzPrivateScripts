@@ -1,13 +1,17 @@
+process.env.GOOGLE_APPLICATION_CREDENTIALS = "./gcp-key.json";
 require('dotenv').config(); 
 const puppeteer = require('puppeteer');
-const { createClient } = require('@supabase/supabase-js');
 const axios = require('axios');
 const xml2js = require('xml2js');
+const { BigQuery } = require('@google-cloud/bigquery');
 
-// Configurar Supabase
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Configurar
+const projectId = 'managerzone-456020';
+const datasetId = 'managerzone_db';
+const bigquery = new BigQuery({ projectId });
+const matchesTableId = 'matches';
+const playersTableId = 'players';
+const statsTableId = 'player_stats';
 
 const TEAM_ID = '1099103'; // ID del equipo
 
@@ -202,48 +206,77 @@ function determineTactic(positions) {
     return `${counts.De}-${counts.Me}-${counts.At}`;
 }
 
-async function saveToSupabase(matchId, data, positions, rivalName, xmlMatchesResponse) {
-    // Verificar si el partido ya existe en la base de datos
-    let { data: matchExists } = await supabase.from('matches').select('*').eq('id', matchId);
-    if (!matchExists || matchExists.length === 0) {
-        const tactic = determineTactic(positions);
-        const {matchType, typeId } = await fetchMatchType(matchId, xmlMatchesResponse); // Obtener el tipo de partido
-        const { error: matchesinsertError } = await supabase.from('matches').insert([{ id: matchId, tactic, type: matchType, match_type_id: typeId, rival: rivalName }]);
-        if (matchesinsertError) console.error('Error insertando matches en Supabase:', matchesinsertError);
-    }
+async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesResponse) {
+    const tactic = determineTactic(positions);
+    const { matchType, typeId } = await fetchMatchType(matchId, xmlMatchesResponse);
+
+    // 1. Insertar partido si no existe
+    const [matches] = await bigquery.query({
+        query: `SELECT id FROM \`${projectId}.${datasetId}.${matchesTableId}\` WHERE id = @matchId`,
+        parameterMode: 'named',
+        params: { matchId },
+    });
     
-    // Recuperar IDs de jugadores existentes
-    const { data: existingPlayers } = await supabase.from('players').select('id, name');
-    const existingPlayerMap = new Map(existingPlayers.map(player => [player.id, player.name]));
 
-    // Filtrar y agregar nuevos jugadores
-    const newPlayers = data.filter(playerStat => !existingPlayerMap.has(playerStat.player_id));
-    if (newPlayers.length > 0) {
-        const playerInserts = newPlayers.map(player => ({
-            id: player.player_id,
-            name: player.player_name
-        }));
-        const { error: playerInsertError } = await supabase.from('players').insert(playerInserts);
-        if (playerInsertError) console.error('Error insertando jugadores en Supabase:', playerInsertError);
+    if (matches.length === 0) {
+        await bigquery.dataset(datasetId).table(matchesTableId).insert([{
+            id: matchId,
+            tactic,
+            type: matchType,
+            match_type_id: parseInt(typeId),
+            rival: rivalName,
+        }]);
     }
 
-    // Eliminar player_name del objeto de estadísticas antes de la inserción
-    const playerStatsWithMatchId = data.map(({ player_name, ...rest }) => ({
-        ...rest,
-        match_id: matchId  // Asegurarse de agregar el match_id
-    }));
-
-    // Insertar estadísticas de jugadores usando upsert para evitar duplicados
-    const { error: statsInsertError } = await supabase.from('player_stats').upsert(playerStatsWithMatchId, {
-        onConflict: ['match_id', 'player_id'] // Evitar duplicados de match_id y player_id
+    // 2. Insertar nuevos jugadores si no existen
+    const uniquePlayerIds = [...new Set(data.map(p => p.player_id))];
+    const [existingPlayers] = await bigquery.query({
+        query: `SELECT id FROM \`${projectId}.${datasetId}.${playersTableId}\` WHERE id IN UNNEST(@ids)`,
+        params: { ids: uniquePlayerIds },
+        parameterMode: 'named'
     });
 
-    if (statsInsertError) {
-        console.error('Error insertando estadísticas en Supabase:', statsInsertError);
-    } else {
-        console.log('Datos insertados correctamente.');
+    const existingPlayerIds = new Set(existingPlayers.map(p => p.id));
+
+    const newPlayers = data
+        .filter(player => !existingPlayerIds.has(player.player_id))
+        .map(player => ({ id: player.player_id, name: player.player_name }));
+
+    if (newPlayers.length > 0) {
+        await bigquery.dataset(datasetId).table(playersTableId).insert(newPlayers);
     }
+
+    // 3. Insertar estadísticas evitando duplicados (match_id + player_id)
+    const statsData = data.map(({ player_name, ...rest }) => ({
+        ...rest,
+        match_id: matchId,
+    }));
+
+    // Obtener combinaciones existentes para este match
+    const [existingStats] = await bigquery.query({
+        query: `SELECT player_id FROM \`${projectId}.${datasetId}.${statsTableId}\` WHERE match_id = @matchId`,
+        params: { matchId },
+        parameterMode: 'named'
+    });
+
+    const existingPlayerStats = new Set(existingStats.map(stat => stat.player_id));
+
+    // Filtrar solo los que no están ya insertados
+    const filteredStatsData = statsData.filter(stat => !existingPlayerStats.has(stat.player_id));
+
+    if (filteredStatsData.length > 0) {
+        try {
+            await bigquery.dataset(datasetId).table(statsTableId).insert(filteredStatsData);
+            console.log(`✅ Insertadas ${filteredStatsData.length} stats para match ${matchId}.`);
+        } catch (err) {
+            console.error('❌ Error al insertar en BigQuery:', err);
+        }
+    } else {
+        console.log(`⏩ Todas las stats del partido ${matchId} ya existen. No se insertó nada.`);
+    }
+
 }
+
 
 (async () => {
     const matchIds = await fetchMatchIds();
@@ -251,23 +284,29 @@ async function saveToSupabase(matchId, data, positions, rivalName, xmlMatchesRes
     const url = `http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id=${TEAM_ID}&match_status=1&limit=100`;
     const xmlMatchesResponse = await axios.get(url);
     for (const matchId of matchIds) {
-        // Verificar si el match ya tiene stats de jugadores en la base de datos
-        const { data: existingStats, error } = await supabase
-        .from('player_stats')
-        .select('player_id', { count: 'exact', head: true })
-        .eq('match_id', matchId);
-
-        if (!error && existingStats && existingStats.length > 0) {
-            console.log(`⏩ Partido ${matchId} ya tiene stats. Saltando...`);
+        const numericMatchId = parseInt(matchId);
+        // Verificar si el match ya tiene stats de jugadores en BigQuery
+        const [existingStats] = await bigquery.query({
+            query: `SELECT player_id FROM \`${projectId}.${datasetId}.${statsTableId}\` WHERE match_id = @matchId LIMIT 1`,
+            parameterMode: 'named',
+            params: {
+                matchId: numericMatchId,
+            },
+        });
+        
+        
+        if (existingStats.length > 0) {
+            console.log(`⏩ Partido ${matchId} ya tiene stats en BigQuery. Saltando...`);
             continue;
         }
+
         const { data, positions, rivalName } = await scrapeMatchData(matchId);
         //print all the data for each match to check if it is correct
         console.log(`Match ID: ${matchId}`);
         console.log('Data:', data);
         console.log('Positions:', positions);
         console.log('Rival:', rivalName);
-        // Guardar en Supabase
-        await saveToSupabase(matchId, data, positions, rivalName, xmlMatchesResponse);
+        // Guardar en bigquery
+        await saveToBigQuery(numericMatchId, data, positions, rivalName, xmlMatchesResponse);
     }
 })();

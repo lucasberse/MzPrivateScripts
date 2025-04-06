@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/bigquery": "^7.9.3",
     "@supabase/supabase-js": "^2.49.4",
     "axios": "^1.8.4",
     "dotenv": "^16.4.7",
