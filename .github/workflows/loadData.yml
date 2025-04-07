@@ -29,4 +29,4 @@ jobs:
     - name: Run matchStats.js
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ./gcp-key.json
-      run: node MzPrivateScripts/matchStats.js
+      run: node matchStats.js
