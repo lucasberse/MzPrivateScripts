@@ -49,7 +49,7 @@ async function fetchMatchType(matchId, xmlResponse) {
             
             // Asegurar que existe la lista de partidos
             if (!result.ManagerZone_MatchList || !result.ManagerZone_MatchList.Match) {
-                return resolve({ matchType: 'Desconocido', typeId: 'Desconocido' });
+                return resolve({ matchType: 'Desconocido', typeId: 'Desconocido', date: 'Desconocida' });
             }
             
             const matches = result.ManagerZone_MatchList.Match;
@@ -58,12 +58,13 @@ async function fetchMatchType(matchId, xmlResponse) {
                 if (parseInt(match.$.id) == matchId) {
                     resolve({
                         matchType: match.$.type,  // Obtener el tipo de partido
-                        typeId: match.$.typeId   // Obtener el typeId
+                        typeId: match.$.typeId,   // Obtener el typeId
+                        date: match.$.date || 'Desconocida'
                     });
                     return;
                 }
             }
-            resolve({ matchType: 'Desconocido', typeId: 'Desconocido' });
+            resolve({ matchType: 'Desconocido', typeId: 'Desconocido', date: 'Desconocida' });
         });
     });
 }
@@ -212,7 +213,7 @@ function determineTactic(positions) {
 
 async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesResponse) {
     const tactic = determineTactic(positions);
-    const { matchType, typeId } = await fetchMatchType(matchId, xmlMatchesResponse);
+    const { matchType, typeId, date } = await fetchMatchType(matchId, xmlMatchesResponse);
 
     // 1. Insertar partido si no existe
     const [matches] = await bigquery.query({
@@ -223,12 +224,14 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
     
 
     if (matches.length === 0) {
+        const formattedDate = date.includes(':') ? `${date}:00` : date;
         await bigquery.dataset(datasetId).table(matchesTableId).insert([{
             id: matchId,
             tactic,
             type: matchType,
             match_type_id: parseInt(typeId),
             rival: rivalName,
+            date: formattedDate
         }]);
     }
 
