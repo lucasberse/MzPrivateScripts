@@ -10,10 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/bigquery": "^7.9.3",
+    "@supabase/supabase-js": "^2.49.4",
+    "axios": "^1.8.4",
     "dotenv": "^16.4.7",
     "fs": "^0.0.1-security",
-    "puppeteer": "^24.4.0",
+    "puppeteer": "^24.6.0",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "xml2js": "^0.6.2"
   }
 }

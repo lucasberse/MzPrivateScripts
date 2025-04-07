@@ -1,0 +1,32 @@
+name: Run matchStats.js
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Ejecutar todos los días a las 6 a.m. UTC
+  workflow_dispatch: # Permitir ejecución manual desde la interfaz de GitHub
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Usa la versión de Node.js que necesitas
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Configure GCP credentials
+      env:
+        GCP_KEY: ${{ secrets.GCP_KEY }}
+      run: echo "$GCP_KEY" > gcp-key.json
+
+    - name: Run matchStats.js
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ./gcp-key.json
+      run: node matchStats.js
