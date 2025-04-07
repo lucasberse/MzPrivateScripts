@@ -1,6 +1,7 @@
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "./gcp-key.json";
 require('dotenv').config(); 
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const axios = require('axios');
 const xml2js = require('xml2js');
 const { BigQuery } = require('@google-cloud/bigquery');
@@ -12,6 +13,7 @@ const bigquery = new BigQuery({ projectId });
 const matchesTableId = 'matches';
 const playersTableId = 'players';
 const statsTableId = 'player_stats';
+puppeteer.use(StealthPlugin());
 
 const TEAM_ID = '1099103'; // ID del equipo
 
