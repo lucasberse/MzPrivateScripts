@@ -1,6 +1,7 @@
 process.env.GOOGLE_APPLICATION_CREDENTIALS = "./gcp-key.json";
 require('dotenv').config(); 
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const axios = require('axios');
 const xml2js = require('xml2js');
 const { BigQuery } = require('@google-cloud/bigquery');
@@ -12,6 +13,7 @@ const bigquery = new BigQuery({ projectId });
 const matchesTableId = 'matches';
 const playersTableId = 'players';
 const statsTableId = 'player_stats';
+puppeteer.use(StealthPlugin());
 
 const TEAM_ID = '1099103'; // ID del equipo
 
@@ -47,7 +49,7 @@ async function fetchMatchType(matchId, xmlResponse) {
             
             // Asegurar que existe la lista de partidos
             if (!result.ManagerZone_MatchList || !result.ManagerZone_MatchList.Match) {
-                return resolve({ matchType: 'Desconocido', typeId: 'Desconocido' });
+                return resolve({ matchType: 'Desconocido', typeId: 'Desconocido', date: 'Desconocida' });
             }
             
             const matches = result.ManagerZone_MatchList.Match;
@@ -56,12 +58,13 @@ async function fetchMatchType(matchId, xmlResponse) {
                 if (parseInt(match.$.id) == matchId) {
                     resolve({
                         matchType: match.$.type,  // Obtener el tipo de partido
-                        typeId: match.$.typeId   // Obtener el typeId
+                        typeId: match.$.typeId,   // Obtener el typeId
+                        date: match.$.date || 'Desconocida'
                     });
                     return;
                 }
             }
-            resolve({ matchType: 'Desconocido', typeId: 'Desconocido' });
+            resolve({ matchType: 'Desconocido', typeId: 'Desconocido', date: 'Desconocida' });
         });
     });
 }
@@ -69,7 +72,9 @@ async function fetchMatchType(matchId, xmlResponse) {
 
 
 async function scrapeMatchData(matchId) {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ 
+        headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
 
@@ -208,7 +213,7 @@ function determineTactic(positions) {
 
 async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesResponse) {
     const tactic = determineTactic(positions);
-    const { matchType, typeId } = await fetchMatchType(matchId, xmlMatchesResponse);
+    const { matchType, typeId, date } = await fetchMatchType(matchId, xmlMatchesResponse);
 
     // 1. Insertar partido si no existe
     const [matches] = await bigquery.query({
@@ -219,12 +224,14 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
     
 
     if (matches.length === 0) {
+        const formattedDate = date.includes(':') ? `${date}:00` : date;
         await bigquery.dataset(datasetId).table(matchesTableId).insert([{
             id: matchId,
             tactic,
             type: matchType,
             match_type_id: parseInt(typeId),
             rival: rivalName,
+            date: formattedDate
         }]);
     }
 
