@@ -322,7 +322,7 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         console.log('Positions:', positions);
         console.log('Rival:', rivalName);
         if(data.length === 0 && positions.length === 0) {
-            console.log(`⏩ Partido ${matchId} no tiene stats podria ser que se gano o perdio por forefeit. Saltando...`);
+            console.log(`⏩ Partido ${matchId} no tiene stats podria ser que se gano o perdio por forfeit. Saltando...`);
             continue;
         }
         // Guardar en bigquery
