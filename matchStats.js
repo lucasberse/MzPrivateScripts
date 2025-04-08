@@ -80,15 +80,23 @@ async function scrapeMatchData(matchId) {
 
     await page.goto(`https://www.managerzone.com/?p=match&sub=result&mid=${matchId}`, { waitUntil: 'domcontentloaded' });
     // wait for selector for 10 seconds and if not skip
+    await page.waitForSelector('#ui-id-3');
     try {
-        await page.waitForSelector('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll', { visible: true, timeout: 10000  });
-        await page.click('#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll');
+        await page.waitForSelector('#CybotCookiebotDialogBodyButtonDecline', { visible: true, timeout: 10000  });
+        await page.click('#CybotCookiebotDialogBodyButtonDecline');
     } catch (error) {
         console.log(' no encontrado, continuando...');
     }
 
-    // Esperar y hacer clic en la pestaña de estadísticas
-    await page.waitForSelector('#ui-id-3');
+    //scroll to the element
+    await page.evaluate(() => {
+        const element = document.querySelector('#ui-id-3');
+        if (element) {
+            element.scrollIntoView();
+        }
+    });
+    await delay(1000);
+    // Hacer clic en la pestaña de estadísticas
     await page.click('#ui-id-3');
 
     //screenshot
@@ -313,6 +321,10 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         console.log('Data:', data);
         console.log('Positions:', positions);
         console.log('Rival:', rivalName);
+        if(data.length === 0 && positions.length === 0) {
+            console.log(`⏩ Partido ${matchId} no tiene stats podria ser que se gano o perdio por forfeit. Saltando...`);
+            continue;
+        }
         // Guardar en bigquery
         await saveToBigQuery(numericMatchId, data, positions, rivalName, xmlMatchesResponse);
     }
