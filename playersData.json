@@ -4,14 +4,14 @@
     { "nombre": "Gerardo Piqué", "id": 220611796, "trainBoost": "velocidad", "trainNormal": "pases" },
     { "nombre": "Veijo Väätäinen", "id": 220066853, "trainBoost": "Intel.", "trainNormal": "Cabeza" },
     { "nombre": "Aleksander Prus", "id": 221469696, "trainBoost": "Pases largos", "trainNormal": "cabeza" },
-    { "nombre": "Nejat Balm", "id": 222626898, "trainBoost": "intel.", "trainNormal": "pases" },
     { "nombre": "Teofil Fudalej", "id": 218800406, "trainBoost": "Ctrl Balón", "trainNormal": "B. parado" },
     { "nombre": "Zé Paulo da Silveira", "id": 221111821, "trainBoost": "Velocidad", "trainNormal": "remates" },
     { "nombre": "Nicu Petrulean", "id": 221499205, "trainBoost": "Velocidad", "trainNormal": "cabeza" },
     { "nombre": "Mister Trump", "id": 220684902, "trainBoost": "Ctrl Balón", "trainNormal": "pases largos" },
     { "nombre": "Dave Efrayim", "id": 221825427, "trainBoost": "pases", "trainNormal": "entradas" },
+    { "nombre": "Arnaldo Bastia", "id": 221422921, "trainBoost": "Intel.", "trainNormal": "B. parado" }
     { "nombre": "Diego Lopes", "id": 219883833, "trainBoost": "pases", "trainNormal": "pases largos" },
     { "nombre": "Sarbelio Calderon", "id": 228342149, "trainBoost": "velocidad", "trainNormal": "cabeza" },
     { "nombre": "Misael Sigaran", "id": 217546233, "trainBoost": "entradas", "trainNormal": "atajando" },
-    { "nombre": "Arnaldo Bastia", "id": 221422921, "trainBoost": "Intel.", "trainNormal": "B. parado" }
+    { "nombre": "Nejat Balm", "id": 222626898, "trainBoost": "intel.", "trainNormal": "pases" },
 ]
