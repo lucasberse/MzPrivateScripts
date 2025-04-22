@@ -35,7 +35,17 @@ jobs:
         env:
           USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
           IS_TRAIN_BOOST: true  # Establecer boost a true
-        run: node boostTrainingChange.js
+        run: |
+          attempt=1
+          until node boostTrainingChange.js; do
+            if [ $attempt -ge 2 ]; then
+              echo "Script failed after $attempt attempts."
+              exit 1
+            fi
+            echo "Attempt $attempt failed. Retrying..."
+            attempt=$((attempt + 1))
+            sleep 5
+          done
 
       - name: Upload error screenshot
         if: failure()  # Solo subir si el trabajo falla
