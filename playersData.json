@@ -88,5 +88,11 @@
         "id": 222626898,
         "trainBoost": "intel.",
         "trainNormal": "remates"
+    },
+    {
+        "nombre": "Hatemi Egeli",
+        "id": 216243178,
+        "trainBoost": "intel.",
+        "trainNormal": "cabeza"
     }
 ]
