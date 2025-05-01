@@ -24,9 +24,9 @@
         "trainNormal": "Cabeza"
     },
     {
-        "nombre": "Aleksander Prus",
-        "id": 221469696,
-        "trainBoost": "Pases largos",
+        "nombre": "Hatemi Egeli",
+        "id": 216243178,
+        "trainBoost": "intel.",
         "trainNormal": "cabeza"
     },
     {
@@ -88,11 +88,5 @@
         "id": 222626898,
         "trainBoost": "intel.",
         "trainNormal": "remates"
-    },
-    {
-        "nombre": "Hatemi Egeli",
-        "id": 216243178,
-        "trainBoost": "intel.",
-        "trainNormal": "cabeza"
     }
 ]
