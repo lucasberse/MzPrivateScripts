@@ -13,6 +13,7 @@ const bigquery = new BigQuery({ projectId });
 const matchesTableId = 'matches';
 const playersTableId = 'players';
 const statsTableId = 'player_stats';
+const statsMatchesTableId = 'match_stats';
 puppeteer.use(StealthPlugin());
 
 const TEAM_ID = '1099103'; // ID del equipo
@@ -70,7 +71,6 @@ async function fetchMatchType(matchId, xmlResponse) {
 }
 
 
-
 async function scrapeMatchData(matchId) {
     const browser = await puppeteer.launch({ 
         headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -101,8 +101,7 @@ async function scrapeMatchData(matchId) {
 
     //screenshot
     // Esperar que cargue la pestaña
-    await delay(2000);
-    
+    await delay(2000);    
     // Activar estadísticas detalladas
     await page.waitForSelector('#detailedToggle .handle');
     while (!(await page.$('#detailedToggle .handle.on'))) {
@@ -131,10 +130,14 @@ async function scrapeMatchData(matchId) {
         }
         const headings = Array.from(document.querySelectorAll('h2'));
         let targetDiv = null;
+        let rivalDiv = null;
         for (const h2 of headings) {
+            if(rivalDiv && targetDiv) break; // Si ambos divs ya fueron encontrados, salir del bucle
             if (h2.textContent.trim() === '★ Lobos FC ★') {
                 targetDiv = h2.nextElementSibling; // Buscar el div después del h2
-                break;
+            }
+            else if (h2.textContent.trim() === rivalName) {
+                rivalDiv = h2.nextElementSibling; // Buscar el div después del h2 del rival
             }
         }
         const rows = targetDiv.querySelectorAll('.hitlist.statsLite.matchStats.matchStats--detailed tbody tr.odd, tr.even');
@@ -195,8 +198,35 @@ async function scrapeMatchData(matchId) {
             }
         });
 
+        // <--- NUEVO BLOQUE PARA EXTRAER LOS DATOS DEL RIVAL
+        let tacklesAgainst = null;
+        let tacklesResisted = null;
+        let percentageTacklesResisted = null;
 
-        return { data, positions, rivalName };
+        if (rivalDiv) {
+            // const tfoot = rivalDiv.querySelector('tfoot');
+            const tfoot = rivalDiv.querySelectorAll('.hitlist.statsLite.matchStats.matchStats--detailed tfoot')[0];
+            if (tfoot) {
+                const trs = tfoot.querySelectorAll('tr');
+                if (trs.length >= 2) {
+                    const secondTr = trs[1];
+                    const tds = secondTr.querySelectorAll('td');
+                    if (tds.length >= 20) {  // nos aseguramos de tener suficientes columnas
+                        tacklesAgainst = parseInt(tds[16].innerText.trim());
+                        tacklesResisted = parseInt(tds[18].innerText.trim());
+                        percentageTacklesResisted = tacklesAgainst > 0 
+                            ? (tacklesResisted / tacklesAgainst) * 100 
+                            : 0;
+                    }
+                }
+            }
+        }
+
+
+        return { data, positions,
+            rivalName, tacklesAgainst, 
+            tacklesResisted, 
+            percentageTacklesResisted  };
     });
     
     await browser.close();
@@ -219,7 +249,8 @@ function determineTactic(positions) {
     return `${counts.De}-${counts.Me}-${counts.At}`;
 }
 
-async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesResponse) {
+async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesResponse, matchStats,
+        existingStats, existingMatchStats) {
     const tactic = determineTactic(positions);
     const { matchType, typeId, date } = await fetchMatchType(matchId, xmlMatchesResponse);
 
@@ -267,13 +298,6 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         match_id: matchId,
     }));
 
-    // Obtener combinaciones existentes para este match
-    const [existingStats] = await bigquery.query({
-        query: `SELECT player_id FROM \`${projectId}.${datasetId}.${statsTableId}\` WHERE match_id = @matchId`,
-        params: { matchId },
-        parameterMode: 'named'
-    });
-
     const existingPlayerStats = new Set(existingStats.map(stat => stat.player_id));
 
     // Filtrar solo los que no están ya insertados
@@ -290,6 +314,24 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         console.log(`⏩ Todas las stats del partido ${matchId} ya existen. No se insertó nada.`);
     }
 
+    // 4. Insertar match_stats si no existe
+    // revisar existingMatchStats
+    if (existingMatchStats.length === 0) {
+        try {
+            await bigquery.dataset(datasetId).table('match_stats').insert([{
+                match_id: matchId,
+                tackles_against: matchStats.tackles_against,
+                tackles_resisted: matchStats.tackles_resisted,
+                percentage_tackles_resisted: matchStats.percentage_tackles_resisted
+            }]);
+            console.log(`✅ Insertadas match_stats para match ${matchId}.`);
+        } catch (err) {
+            console.error('❌ Error al insertar en match_stats:', err);
+        }
+    } else {
+        console.log(`⏩ match_stats para match ${matchId} ya existen. No se insertó nada.`);
+    }
+
 }
 
 
@@ -302,7 +344,15 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         const numericMatchId = parseInt(matchId);
         // Verificar si el match ya tiene stats de jugadores en BigQuery
         const [existingStats] = await bigquery.query({
-            query: `SELECT player_id FROM \`${projectId}.${datasetId}.${statsTableId}\` WHERE match_id = @matchId LIMIT 1`,
+            query: `SELECT player_id FROM \`${projectId}.${datasetId}.${statsTableId}\` WHERE match_id = @matchId`,
+            parameterMode: 'named',
+            params: {
+                matchId: numericMatchId,
+            },
+        });
+
+        const [existingMatchStats] = await bigquery.query({
+            query: `SELECT * FROM \`${projectId}.${datasetId}.${statsMatchesTableId}\` WHERE match_id = @matchId LIMIT 1`,
             parameterMode: 'named',
             params: {
                 matchId: numericMatchId,
@@ -310,22 +360,32 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         });
         
         
-        if (existingStats.length > 0) {
+        if (existingStats.length > 0 && existingMatchStats.length > 0) {
             console.log(`⏩ Partido ${matchId} ya tiene stats en BigQuery. Saltando...`);
             continue;
         }
 
-        const { data, positions, rivalName } = await scrapeMatchData(matchId);
+        const { data, positions, rivalName, tacklesAgainst, tacklesResisted, percentageTacklesResisted } = await scrapeMatchData(matchId);
         //print all the data for each match to check if it is correct
         console.log(`Match ID: ${matchId}`);
         console.log('Data:', data);
         console.log('Positions:', positions);
         console.log('Rival:', rivalName);
+        console.log('Tackles Against:', tacklesAgainst);
+        console.log('Tackles Resisted:', tacklesResisted);
+        console.log('Percentage Tackles Resisted:', percentageTacklesResisted);
         if(data.length === 0 && positions.length === 0) {
             console.log(`⏩ Partido ${matchId} no tiene stats podria ser que se gano o perdio por forfeit. Saltando...`);
             continue;
         }
+        let matchStats = {
+            tackles_against: tacklesAgainst,
+            tackles_resisted: tacklesResisted,
+            percentage_tackles_resisted: percentageTacklesResisted
+        }
         // Guardar en bigquery
-        await saveToBigQuery(numericMatchId, data, positions, rivalName, xmlMatchesResponse);
+        await saveToBigQuery(numericMatchId, data, positions, 
+            rivalName, xmlMatchesResponse, matchStats,
+            existingStats, existingMatchStats);
     }
 })();
