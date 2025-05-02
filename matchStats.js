@@ -249,7 +249,8 @@ function determineTactic(positions) {
     return `${counts.De}-${counts.Me}-${counts.At}`;
 }
 
-async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesResponse, matchStats) {
+async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesResponse, matchStats,
+        existingStats, existingMatchStats) {
     const tactic = determineTactic(positions);
     const { matchType, typeId, date } = await fetchMatchType(matchId, xmlMatchesResponse);
 
@@ -297,13 +298,6 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         match_id: matchId,
     }));
 
-    // Obtener combinaciones existentes para este match
-    const [existingStats] = await bigquery.query({
-        query: `SELECT player_id FROM \`${projectId}.${datasetId}.${statsTableId}\` WHERE match_id = @matchId`,
-        params: { matchId },
-        parameterMode: 'named'
-    });
-
     const existingPlayerStats = new Set(existingStats.map(stat => stat.player_id));
 
     // Filtrar solo los que no están ya insertados
@@ -321,12 +315,7 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
     }
 
     // 4. Insertar match_stats si no existe
-    const [existingMatchStats] = await bigquery.query({
-        query: `SELECT match_id FROM \`${projectId}.${datasetId}.${statsMatchesTableId}\` WHERE match_id = @matchId`,
-        params: { matchId },
-        parameterMode: 'named'
-    });
-
+    // revisar existingMatchStats
     if (existingMatchStats.length === 0) {
         try {
             await bigquery.dataset(datasetId).table('match_stats').insert([{
@@ -355,7 +344,7 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         const numericMatchId = parseInt(matchId);
         // Verificar si el match ya tiene stats de jugadores en BigQuery
         const [existingStats] = await bigquery.query({
-            query: `SELECT player_id FROM \`${projectId}.${datasetId}.${statsTableId}\` WHERE match_id = @matchId LIMIT 1`,
+            query: `SELECT player_id FROM \`${projectId}.${datasetId}.${statsTableId}\` WHERE match_id = @matchId`,
             parameterMode: 'named',
             params: {
                 matchId: numericMatchId,
@@ -395,6 +384,8 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
             percentage_tackles_resisted: percentageTacklesResisted
         }
         // Guardar en bigquery
-        await saveToBigQuery(numericMatchId, data, positions, rivalName, xmlMatchesResponse, matchStats);
+        await saveToBigQuery(numericMatchId, data, positions, 
+            rivalName, xmlMatchesResponse, matchStats,
+            existingStats, existingMatchStats);
     }
 })();
