@@ -296,6 +296,11 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
     const statsData = data.map(({ player_name, ...rest }) => ({
         ...rest,
         match_id: matchId,
+        // Forzar NULL si no hubo intentos
+        passes_success_rate: rest.passes_total > 0 ? rest.passes_success_rate : null,
+        tackles_success_rate: rest.tackles_total > 0 ? rest.tackles_success_rate : null,
+        shot_on_target_rate: rest.shots_total > 0 ? rest.shot_on_target_rate : null,
+        shot_goal_rate: rest.shots_total > 0 ? rest.shot_goal_rate : null,
     }));
 
     const existingPlayerStats = new Set(existingStats.map(stat => stat.player_id));
