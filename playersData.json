@@ -15,7 +15,7 @@
         "nombre": "Gerardo Piqué",
         "id": 220611796,
         "trainBoost": "velocidad",
-        "trainNormal": "pases"
+        "trainNormal": "remates"
     },
     {
         "nombre": "Veijo Väätäinen",
@@ -38,7 +38,7 @@
     {
         "nombre": "Zé Paulo da Silveira",
         "id": 221111821,
-        "trainBoost": "Velocidad",
+        "trainBoost": "pases",
         "trainNormal": "remates"
     },
     {
@@ -62,7 +62,7 @@
     {
         "nombre": "Arnaldo Bastia",
         "id": 221422921,
-        "trainBoost": "Intel.",
+        "trainBoost": "entradas",
         "trainNormal": "B. parado"
     },
     {
