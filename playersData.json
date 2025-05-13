@@ -48,9 +48,9 @@
         "trainNormal": "cabeza"
     },
     {
-        "nombre": "Mister Trump",
-        "id": 220684902,
-        "trainBoost": "Ctrl Balón",
+        "nombre": "Alek Candries",
+        "id": 221561059,
+        "trainBoost": "pases",
         "trainNormal": "pases largos"
     },
     {
@@ -88,5 +88,11 @@
         "id": 222626898,
         "trainBoost": "intel.",
         "trainNormal": "remates"
+    },
+    {
+        "nombre": "Mister Trump",
+        "id": 220684902,
+        "trainBoost": "Ctrl Balón",
+        "trainNormal": "pases largos"
     }
 ]
