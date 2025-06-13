@@ -202,6 +202,7 @@ async function scrapeMatchData(matchId) {
         let tacklesAgainst = null;
         let tacklesResisted = null;
         let percentageTacklesResisted = null;
+        let rivalGoals = null;
 
         if (rivalDiv) {
             // const tfoot = rivalDiv.querySelector('tfoot');
@@ -214,6 +215,7 @@ async function scrapeMatchData(matchId) {
                     if (tds.length >= 20) {  // nos aseguramos de tener suficientes columnas
                         tacklesAgainst = parseInt(tds[16].innerText.trim());
                         tacklesResisted = parseInt(tds[18].innerText.trim());
+                        rivalGoals = parseInt(tds[3].innerText.trim());
                         percentageTacklesResisted = tacklesAgainst > 0 
                             ? (tacklesResisted / tacklesAgainst) * 100 
                             : 0;
@@ -226,7 +228,7 @@ async function scrapeMatchData(matchId) {
         return { data, positions,
             rivalName, tacklesAgainst, 
             tacklesResisted, 
-            percentageTacklesResisted  };
+            percentageTacklesResisted, rivalGoals  };
     });
     
     await browser.close();
@@ -327,7 +329,8 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
                 match_id: matchId,
                 tackles_against: matchStats.tackles_against,
                 tackles_resisted: matchStats.tackles_resisted,
-                percentage_tackles_resisted: matchStats.percentage_tackles_resisted
+                percentage_tackles_resisted: matchStats.percentage_tackles_resisted,
+                rival_goals: matchStats.rival_goals
             }]);
             console.log(`✅ Insertadas match_stats para match ${matchId}.`);
         } catch (err) {
@@ -370,7 +373,7 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
             continue;
         }
 
-        const { data, positions, rivalName, tacklesAgainst, tacklesResisted, percentageTacklesResisted } = await scrapeMatchData(matchId);
+        const { data, positions, rivalName, tacklesAgainst, tacklesResisted, percentageTacklesResisted, rivalGoals } = await scrapeMatchData(matchId);
         //print all the data for each match to check if it is correct
         console.log(`Match ID: ${matchId}`);
         console.log('Data:', data);
@@ -379,6 +382,7 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         console.log('Tackles Against:', tacklesAgainst);
         console.log('Tackles Resisted:', tacklesResisted);
         console.log('Percentage Tackles Resisted:', percentageTacklesResisted);
+        console.log('Rival Goals:', rivalGoals);
         if(data.length === 0 && positions.length === 0) {
             console.log(`⏩ Partido ${matchId} no tiene stats podria ser que se gano o perdio por forfeit. Saltando...`);
             continue;
@@ -386,7 +390,8 @@ async function saveToBigQuery(matchId, data, positions, rivalName, xmlMatchesRes
         let matchStats = {
             tackles_against: tacklesAgainst,
             tackles_resisted: tacklesResisted,
-            percentage_tackles_resisted: percentageTacklesResisted
+            percentage_tackles_resisted: percentageTacklesResisted,
+            rival_goals: rivalGoals
         }
         // Guardar en bigquery
         await saveToBigQuery(numericMatchId, data, positions, 
