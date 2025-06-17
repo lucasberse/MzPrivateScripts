@@ -24,12 +24,6 @@
         "trainNormal": "Cabeza"
     },
     {
-        "nombre": "Hatemi Egeli",
-        "id": 216243178,
-        "trainBoost": "intel.",
-        "trainNormal": "cabeza"
-    },
-    {
         "nombre": "Teofil Fudalej",
         "id": 218800406,
         "trainBoost": "entradas",
@@ -40,12 +34,6 @@
         "id": 221111821,
         "trainBoost": "pases",
         "trainNormal": "remates"
-    },
-    {
-        "nombre": "Nicu Petrulean",
-        "id": 221499205,
-        "trainBoost": "Velocidad",
-        "trainNormal": "cabeza"
     },
     {
         "nombre": "Alek Candries",
@@ -72,12 +60,6 @@
         "trainNormal": "pases largos"
     },
     {
-        "nombre": "Sarbelio Calderon",
-        "id": 228342149,
-        "trainBoost": "velocidad",
-        "trainNormal": "cabeza"
-    },
-    {
         "nombre": "Misael Sigaran",
         "id": 217546233,
         "trainBoost": "entradas",
@@ -88,5 +70,23 @@
         "id": 222626898,
         "trainBoost": "intel.",
         "trainNormal": "B. parado"
+    },
+    {
+        "nombre": "Nicu Petrulean",
+        "id": 221499205,
+        "trainBoost": "Velocidad",
+        "trainNormal": "cabeza"
+    },
+    {
+        "nombre": "Hatemi Egeli",
+        "id": 216243178,
+        "trainBoost": "intel.",
+        "trainNormal": "cabeza"
+    },
+    {
+        "nombre": "Sarbelio Calderon",
+        "id": 228342149,
+        "trainBoost": "velocidad",
+        "trainNormal": "cabeza"
     }
 ]
