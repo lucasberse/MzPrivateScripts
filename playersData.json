@@ -22,7 +22,13 @@
         "id": 220066853,
         "trainBoost": "Intel.",
         "trainNormal": "Cabeza"
-    }, 
+    },
+    {
+        "nombre": "Hector-Luis Arzola",
+        "id": 220783342,
+        "trainBoost": "Cabeza",
+        "trainNormal": "Cabeza"
+    },
     {
         "nombre": "Zé Paulo da Silveira",
         "id": 221111821,
@@ -30,14 +36,14 @@
         "trainNormal": "remates"
     },
     {
-        "nombre": "Alek Candries",
-        "id": 221561059,
-        "trainBoost": "pases",
-        "trainNormal": "pases largos"
+        "nombre": "Hu Cheng",
+        "id": 219413468,
+        "trainBoost": "resistencia",
+        "trainNormal": "Cabeza"
     },
     {
-        "nombre": "Dave Efrayim",
-        "id": 221825427,
+        "nombre": "Alek Candries",
+        "id": 221561059,
         "trainBoost": "pases",
         "trainNormal": "pases largos"
     },
