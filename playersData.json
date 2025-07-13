@@ -26,8 +26,8 @@
     {
         "nombre": "Hector-Luis Arzola",
         "id": 220783342,
-        "trainBoost": "Cabeza",
-        "trainNormal": "Cabeza"
+        "trainBoost": "resistencia",
+        "trainNormal": "entradas"
     },
     {
         "nombre": "Zé Paulo da Silveira",
