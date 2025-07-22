@@ -6,10 +6,10 @@
         "trainNormal": "Remates"
     },
     {
-        "nombre": "Eumaios Zorbas",
-        "id": 220290465,
+        "nombre": "De chino",
+        "id": 223509454,
         "trainBoost": "pases largos",
-        "trainNormal": "remates"
+        "trainNormal": "pases largos"
     },
     {
         "nombre": "Gerardo Piqué",
@@ -24,10 +24,10 @@
         "trainNormal": "Cabeza"
     },
     {
-        "nombre": "Hector-Luis Arzola",
-        "id": 220783342,
-        "trainBoost": "resistencia",
-        "trainNormal": "entradas"
+        "nombre": "Eumaios Zorbas",
+        "id": 220290465,
+        "trainBoost": "pases largos",
+        "trainNormal": "remates"
     },
     {
         "nombre": "Zé Paulo da Silveira",
