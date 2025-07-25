@@ -88,5 +88,11 @@
         "id": 228342149,
         "trainBoost": "velocidad",
         "trainNormal": "cabeza"
+    },
+    {
+        "nombre": "Julio Lozano",
+        "id": 228449676,
+        "trainBoost": "intel.",
+        "trainNormal": "pases largos"
     }
 ]
