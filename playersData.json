@@ -18,6 +18,18 @@
         "trainNormal": "remates"
     },
     {
+        "nombre": "Nicu Petrulean",
+        "id": 221499205,
+        "trainBoost": "Velocidad",
+        "trainNormal": "remates"
+    },
+    {
+        "nombre": "Sarbelio Calderon",
+        "id": 228342149,
+        "trainBoost": "velocidad",
+        "trainNormal": "cabeza"
+    },
+    {
         "nombre": "Veijo Väätäinen",
         "id": 220066853,
         "trainBoost": "Intel.",
@@ -72,21 +84,9 @@
         "trainNormal": "B. parado"
     },
     {
-        "nombre": "Nicu Petrulean",
-        "id": 221499205,
-        "trainBoost": "Velocidad",
-        "trainNormal": "remates"
-    },
-    {
         "nombre": "Hatemi Egeli",
         "id": 216243178,
         "trainBoost": "intel.",
-        "trainNormal": "cabeza"
-    },
-    {
-        "nombre": "Sarbelio Calderon",
-        "id": 228342149,
-        "trainBoost": "velocidad",
         "trainNormal": "cabeza"
     },
     {
