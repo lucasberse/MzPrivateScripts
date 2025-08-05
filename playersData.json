@@ -90,6 +90,18 @@
         "trainNormal": "cabeza"
     },
     {
+        "nombre": "Ladislao Bustamante",
+        "id": 231096463,
+        "trainBoost": "pases largos",
+        "trainNormal": "Ctrl Balón"
+    },
+    {
+        "nombre": "Allan Victorino",
+        "id": 230135842,
+        "trainBoost": "pases",
+        "trainNormal": "remates"
+    },
+    {
         "nombre": "Julio Lozano",
         "id": 228449676,
         "trainBoost": "intel.",
