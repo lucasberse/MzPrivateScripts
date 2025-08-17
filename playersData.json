@@ -36,6 +36,12 @@
         "trainNormal": "Cabeza"
     },
     {
+        "nombre": "Arnaldo Bastia",
+        "id": 221422921,
+        "trainBoost": "entradas",
+        "trainNormal": "B. parado"
+    },
+    {
         "nombre": "Zé Paulo da Silveira",
         "id": 221111821,
         "trainBoost": "pases",
@@ -51,12 +57,6 @@
         "nombre": "Alek Candries",
         "id": 221561059,
         "trainBoost": "pases",
-        "trainNormal": "B. parado"
-    },
-    {
-        "nombre": "Arnaldo Bastia",
-        "id": 221422921,
-        "trainBoost": "entradas",
         "trainNormal": "B. parado"
     },
     {
