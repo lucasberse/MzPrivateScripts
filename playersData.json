@@ -27,13 +27,13 @@
         "nombre": "Sarbelio Calderon",
         "id": 228342149,
         "trainBoost": "velocidad",
-        "trainNormal": "cabeza"
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Veijo Väätäinen",
         "id": 220066853,
         "trainBoost": "Intel.",
-        "trainNormal": "Cabeza"
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Arnaldo Bastia",
@@ -57,7 +57,7 @@
         "nombre": "Alek Candries",
         "id": 221561059,
         "trainBoost": "pases",
-        "trainNormal": "B. parado"
+        "trainNormal": "pases largos"
     },
     {
         "nombre": "Diego Lopes",
@@ -81,7 +81,7 @@
         "nombre": "Hatemi Egeli",
         "id": 216243178,
         "trainBoost": "intel.",
-        "trainNormal": "cabeza"
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Ladislao Bustamante",
