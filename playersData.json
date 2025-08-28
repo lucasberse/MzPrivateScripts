@@ -51,7 +51,7 @@
         "nombre": "Hu Cheng",
         "id": 219413468,
         "trainBoost": "resistencia",
-        "trainNormal": "Cabeza"
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Alek Candries",
@@ -75,13 +75,13 @@
         "nombre": "Nejat Balm",
         "id": 222626898,
         "trainBoost": "remates",
-        "trainNormal": "cabeza"
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Hatemi Egeli",
         "id": 216243178,
         "trainBoost": "intel.",
-        "trainNormal": "B. parado"
+        "trainNormal": "cabeza"
     },
     {
         "nombre": "Ladislao Bustamante",
