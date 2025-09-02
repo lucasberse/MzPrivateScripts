@@ -27,31 +27,31 @@
         "nombre": "Sarbelio Calderon",
         "id": 228342149,
         "trainBoost": "velocidad",
-        "trainNormal": "B. parado"
+        "trainNormal": "cabeza"
     },
     {
         "nombre": "Veijo Väätäinen",
         "id": 220066853,
         "trainBoost": "Intel.",
-        "trainNormal": "B. parado"
+        "trainNormal": "atajando"
     },
     {
         "nombre": "Arnaldo Bastia",
         "id": 221422921,
         "trainBoost": "entradas",
-        "trainNormal": "B. parado"
+        "trainNormal": "atajando"
     },
     {
         "nombre": "Zé Paulo da Silveira",
         "id": 221111821,
         "trainBoost": "pases",
-        "trainNormal": "remates"
+        "trainNormal": "cabeza"
     },
     {
         "nombre": "Hu Cheng",
         "id": 219413468,
         "trainBoost": "resistencia",
-        "trainNormal": "B. parado"
+        "trainNormal": "atajando"
     },
     {
         "nombre": "Alek Candries",
@@ -75,7 +75,7 @@
         "nombre": "Nejat Balm",
         "id": 222626898,
         "trainBoost": "remates",
-        "trainNormal": "B. parado"
+        "trainNormal": "atajando"
     },
     {
         "nombre": "Hatemi Egeli",
