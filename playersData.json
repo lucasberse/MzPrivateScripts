@@ -33,13 +33,13 @@
         "nombre": "Veijo Väätäinen",
         "id": 220066853,
         "trainBoost": "Intel.",
-        "trainNormal": "atajando"
+        "trainNormal": "cabeza"
     },
     {
         "nombre": "Arnaldo Bastia",
         "id": 221422921,
         "trainBoost": "entradas",
-        "trainNormal": "atajando"
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Zé Paulo da Silveira",
@@ -81,7 +81,7 @@
         "nombre": "Hatemi Egeli",
         "id": 216243178,
         "trainBoost": "intel.",
-        "trainNormal": "cabeza"
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Ladislao Bustamante",
