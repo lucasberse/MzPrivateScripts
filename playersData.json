@@ -1,21 +1,9 @@
 [
     {
-        "nombre": "Svante Valrot",
-        "id": 220526654,
-        "trainBoost": "Intel.",
-        "trainNormal": "cabeza"
-    },
-    {
         "nombre": "De chino",
         "id": 223509454,
         "trainBoost": "pases largos",
         "trainNormal": "pases largos"
-    },
-    {
-        "nombre": "Gerardo Piqué",
-        "id": 220611796,
-        "trainBoost": "velocidad",
-        "trainNormal": "remates"
     },
     {
         "nombre": "Nicu Petrulean",
