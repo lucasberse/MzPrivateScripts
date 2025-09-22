@@ -2,9 +2,27 @@
     
     {
         "nombre": "Emilian Zdrascu",
-        "id": 223509454,
+        "id": 219922617,
         "trainBoost": "Ctrl Balón",
         "trainNormal": "remates"
+    },
+    {
+        "nombre": "Ian Boberg",
+        "id": 223344614,
+        "trainBoost": "velocidad",
+        "trainNormal": "Ctrl Balón"
+    },
+    {
+        "nombre": "De chino",
+        "id": 223509454,
+        "trainBoost": "pases largos",
+        "trainNormal": "B. parado"
+    },
+    {
+        "nombre": "Harry Bengtsson",
+        "id": 218376905,
+        "trainBoost": "velocidad",
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Nicu Petrulean",
