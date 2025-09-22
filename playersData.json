@@ -1,15 +1,16 @@
 [
+    
     {
-        "nombre": "De chino",
+        "nombre": "Emilian Zdrascu",
         "id": 223509454,
-        "trainBoost": "pases largos",
-        "trainNormal": "pases largos"
+        "trainBoost": "Ctrl Balón",
+        "trainNormal": "remates"
     },
     {
         "nombre": "Nicu Petrulean",
         "id": 221499205,
         "trainBoost": "Velocidad",
-        "trainNormal": "remates"
+        "trainNormal": "B. parado"
     },
     {
         "nombre": "Sarbelio Calderon",
@@ -51,7 +52,7 @@
         "nombre": "Diego Lopes",
         "id": 219883833,
         "trainBoost": "pases",
-        "trainNormal": "B. parado"
+        "trainNormal": "pases largos"
     },
     {
         "nombre": "Misael Sigaran",
