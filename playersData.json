@@ -37,12 +37,6 @@
         "trainNormal": "cabeza"
     },
     {
-        "nombre": "Veijo Väätäinen",
-        "id": 220066853,
-        "trainBoost": "Intel.",
-        "trainNormal": "cabeza"
-    },
-    {
         "nombre": "Arnaldo Bastia",
         "id": 221422921,
         "trainBoost": "entradas",
@@ -67,9 +61,9 @@
         "trainNormal": "B. parado"
     },
     {
-        "nombre": "Diego Lopes",
-        "id": 219883833,
-        "trainBoost": "pases",
+        "nombre": "Sam Huveneers",
+        "id": 225325200,
+        "trainBoost": "resistencia",
         "trainNormal": "pases largos"
     },
     {
