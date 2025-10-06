@@ -5,5 +5,90 @@
         "id": 226380861,
         "trainBoost": "Ctrl Balón",
         "trainNormal": "pases"
+    },
+    {
+        "nombre": "Oka 舒",
+        "id": 225596905,
+        "trainBoost": "pases largos",
+        "trainNormal": "cabeza"
+    },
+    {
+        "nombre": "Davinson Sánchez",
+        "id": 225175032,
+        "trainBoost": "pases largos",
+        "trainNormal": "atajando"
+    },
+    {
+        "nombre": "Lázaro Muc",
+        "id": 226386448,
+        "trainBoost": "pases largos",
+        "trainNormal": "intel."
+    },
+    {
+        "nombre": "Rama Sala",
+        "id": 224692428,
+        "trainBoost": "pases largos",
+        "trainNormal": "atajando"
+    },
+    {
+        "nombre": "Haroldo Tadzio",
+        "id": 228338411,
+        "trainBoost": "intel.",
+        "trainNormal": "cabeza"
+    },
+    {
+        "nombre": "Ivan Ganix",
+        "id": 228394018,
+        "trainBoost": "intel.",
+        "trainNormal": "atajando"
+    },
+    {
+        "nombre": "Maximino Pelagius",
+        "id": 223637290,
+        "trainBoost": "pases largos",
+        "trainNormal": "pases"
+    },
+    {
+        "nombre": "姜鸿坤",
+        "id": 223524380,
+        "trainBoost": "intel.",
+        "trainNormal": "remates"
+    },
+    {
+        "nombre": "Aldo Anjos",
+        "id": 223545968,
+        "trainBoost": "Ctrl Balón",
+        "trainNormal": "remates"
+    },
+    {
+        "nombre": "Alex Berse",
+        "id": 225496086,
+        "trainBoost": "intel.",
+        "trainNormal": "pases largos"
+    },
+    {
+        "nombre": "Siro Manni",
+        "id": 226286829,
+        "trainBoost": "Ctrl Balón",
+        "trainNormal": "Ctrl Balón"
+    },
+    {
+        "nombre": "Candido Platon",
+        "id": 223335694,
+        "trainBoost": "pases largos",
+        "trainNormal": "pases largos"
+    },
+    {
+        "nombre": "Matias Ramond",
+        "id": 224389597,
+        "trainBoost": "Pases",
+        "trainNormal": "Pases"
+    },
+    {
+        "nombre": "Esteve Velasco",
+        "id": 226285123,
+        "trainBoost": "pases",
+        "trainNormal": "atajando"
     }
 ]
+
