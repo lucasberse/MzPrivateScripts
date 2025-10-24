@@ -89,6 +89,12 @@
         "id": 226285123,
         "trainBoost": "pases",
         "trainNormal": "entradas"
+    },
+    {
+        "nombre": "Anselm Kempe",
+        "id": 226380738,
+        "trainBoost": "pases",
+        "trainNormal": "pases largos"
     }
 ]
 
