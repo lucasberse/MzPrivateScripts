@@ -1,11 +1,4 @@
 [
-    
-    {
-        "nombre": "Mister Yasin",
-        "id": 226380861,
-        "trainBoost": "Ctrl Balón",
-        "trainNormal": "pases"
-    },
     {
         "nombre": "Oka 舒",
         "id": 225596905,
@@ -43,12 +36,6 @@
         "trainNormal": "atajando"
     },
     {
-        "nombre": "Maximino Pelagius",
-        "id": 223637290,
-        "trainBoost": "pases largos",
-        "trainNormal": "pases"
-    },
-    {
         "nombre": "姜鸿坤",
         "id": 223524380,
         "trainBoost": "intel.",
@@ -79,11 +66,11 @@
         "trainNormal": "pases largos"
     },
     {
-        "nombre": "Matias Ramond",
-        "id": 224389597,
-        "trainBoost": "Pases",
+        "nombre": "Anselm Kempe",
+        "id": 226380738,
+        "trainBoost": "pases",
         "trainNormal": "cabeza"
-    },
+    }
     {
         "nombre": "Esteve Velasco",
         "id": 226285123,
@@ -91,10 +78,10 @@
         "trainNormal": "entradas"
     },
     {
-        "nombre": "Anselm Kempe",
-        "id": 226380738,
-        "trainBoost": "pases",
-        "trainNormal": "pases largos"
+        "nombre": "Mister Yasin",
+        "id": 226380861,
+        "trainBoost": "Ctrl Balón",
+        "trainNormal": "pases"
     }
 ]
 
